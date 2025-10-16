@@ -6,7 +6,7 @@ pipeline{
     stages {
         stage('git checkout') {
             steps {
-                git url: 'https://github.com/rani9010/infra-repo-jenkinspipeline'
+                git url: 'https://github.com/rani9010/infra-repo-jenkinspipeline' , branch: 'main'
                 branch:'main'
             }
         }
