@@ -1,46 +1,53 @@
-pipeline{
-    agent{
-        label 'INFRA'
-    }
+pipeline {
+    agent { label 'INFRA' }
 
     stages {
-        stage('git checkout') {
+        stage('Git Checkout') {
             steps {
-                git url: 'https://github.com/rani9010/infra-repo-jenkinspipeline' , branch: 'main'
-                branch:'main'
+                git(
+                    url: 'https://github.com/rani9010/infra-repo-jenkinspipeline',
+                    branch: 'main'
+                )
             }
         }
-        stage('terraform init') {
+
+        stage('Terraform Init') {
             steps {
                 sh 'terraform init'
             }
         }
-        stage('terraform validate') {
+
+        stage('Terraform Validate') {
             steps {
                 sh 'terraform validate'
             }
         }
-        stage('terraform formate') {
+
+        stage('Terraform Format') {
             steps {
                 sh 'terraform fmt'
             }
         }
-        stage('infra scan') {
+
+        stage('Infra Scan') {
             steps {
-                sh 'terraform scan'
+                sh 'terraform scan' // You may want to replace this with tfsec or checkov
             }
         }
-        stage('lint') {
+
+        stage('Lint') {
             steps {
                 sh 'tflint'
             }
         }
-        stage('terraform plan') {
+
+        stage('Terraform Plan') {
             steps {
                 sh 'terraform plan'
             }
         }
-        stage('terraform apply') {
+
+        stage('Terraform Apply') {
             steps {
                 sh 'terraform apply -auto-approve'
             }
