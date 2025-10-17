@@ -1,56 +1,72 @@
 pipeline {
-    agent { label 'INFRA' }
+    agent {
+        label 'JAVA'
+    }
 
     stages {
         stage('Git Checkout') {
             steps {
-                git(
-                    url: 'https://github.com/rani9010/infra-repo-jenkinspipeline',
-                    branch: 'main'
-                )
+                git url: 'https://github.com/rani9010/infra-repo-jenkinspipeline', branch: 'main'
             }
         }
 
         stage('Terraform Init') {
             steps {
-                sh 'terraform init'
+                dir('tffiles') {
+                    sh 'terraform init'
+                }
             }
         }
 
         stage('Terraform Validate') {
             steps {
-                sh 'terraform validate'
+                dir('tffiles') {
+                    sh 'terraform validate'
+                }
             }
         }
 
         stage('Terraform Format') {
             steps {
-                sh 'terraform fmt'
+                dir('tffiles') {
+                    sh 'terraform fmt'
+                }
             }
         }
 
         stage('Infra Scan') {
             steps {
-                sh 'terraform scan' // You may want to replace this with tfsec or checkov
+                dir('tffiles') {
+                    // Use tfsec to scan Terraform code for security issues
+                    sh 'tfsec --soft-fail .'
+                }
             }
         }
 
         stage('Lint') {
             steps {
-                sh 'tflint'
+                dir('tffiles') {
+                    // Use tflint to check Terraform best practices
+                    sh 'tflint'
+                }
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                sh 'terraform plan'
+                dir('tffiles') {
+                    sh 'terraform plan'
+                }
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                sh 'terraform apply -auto-approve'
+                dir('tffiles') {
+                    sh 'terraform apply -auto-approve'
+                }
             }
         }
     }
 }
+    
